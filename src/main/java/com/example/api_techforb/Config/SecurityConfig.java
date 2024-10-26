@@ -10,9 +10,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.example.api_techforb.Jwt.JwtAuthenticationFilter;
+import com.example.api_techforb.Modules.auth.Jwt.JwtAuthenticationFilter;
+
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,13 +30,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .cors() // Habilitar CORS
-            .and()
+            .cors().
+            and()
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authRequest ->
                 authRequest
-                    .requestMatchers("/auth/**").permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/auth/**").permitAll() // Permitir el acceso a los endpoints de autenticación
+                    .requestMatchers("/plants/**").permitAll() // Permite acceso sin autenticación a los endpoints de plants
+
+                    .anyRequest().authenticated() // Requiere autenticación para cualquier otra solicitud
             )
             .sessionManagement(sessionManager ->
                 sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -44,6 +47,9 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
+
+    
+    
 
     // Configuración de CORS
     @Bean

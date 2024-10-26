@@ -1,4 +1,4 @@
-package com.example.api_techforb.Auth;
+package com.example.api_techforb.Modules.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,4 +12,7 @@ import lombok.NoArgsConstructor;
 public class RegisterRequest {
     String username;
     String password;
+    String mail;
+    String lastname;
+    String firstname;
 }

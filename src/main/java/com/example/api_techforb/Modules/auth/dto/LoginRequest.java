@@ -1,4 +1,4 @@
-package com.example.api_techforb.Auth;
+package com.example.api_techforb.Modules.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthResponse {
-    String token;
+public class LoginRequest {
+    String mail;
+    String password;
 }

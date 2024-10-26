@@ -1,4 +1,4 @@
-package com.example.api_techforb.Jwt;
+package com.example.api_techforb.Modules.auth.Jwt;
 
 import java.io.IOException;
 
@@ -17,7 +17,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
 
 @Component
 @RequiredArgsConstructor
@@ -71,8 +70,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-
-
-    
 }

@@ -1,4 +1,4 @@
-package com.example.api_techforb.User;
+package com.example.api_techforb.Modules.user.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,8 +31,11 @@ public class User implements UserDetails{
     @GeneratedValue
     Integer id;
     @Column(nullable = false)
+    String mail;
     String username;
     String password;
+    public String lastname;
+    String firstname;
     @Enumerated(EnumType.STRING)
     Role role;
     

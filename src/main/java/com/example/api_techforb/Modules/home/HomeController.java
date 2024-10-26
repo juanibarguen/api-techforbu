@@ -1,4 +1,4 @@
-package com.example.api_techforb.Controller;
+package com.example.api_techforb.Modules.home;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

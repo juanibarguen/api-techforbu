@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.example.api_techforb.User.UserRepository;
+
+import com.example.api_techforb.Modules.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -40,7 +42,7 @@ private final UserRepository userRepository;
 
     @Bean
     public UserDetailsService userDetailService() {
-        return username -> userRepository.findByUsername(username)
+        return mail -> userRepository.findByMail(mail)
         .orElseThrow(()-> new UsernameNotFoundException("User not fournd"));
     }
 }
