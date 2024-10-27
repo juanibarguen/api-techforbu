@@ -1,6 +1,7 @@
 package com.example.api_techforb.Modules.auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,24 +38,39 @@ public class AuthService {
     
 
 public AuthResponse login(LoginRequest request) {
-    // Autentica el usuario
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getMail(), request.getPassword())
-    );
+    // Verifica si el usuario existe en la base de datos
+    User user = userRepository.findByMail(request.getMail())
+        .orElseThrow(() -> new UsernameNotFoundException("Correo no registrado"));
 
-    // Obtiene los detalles del usuario
-    UserDetails user = getUserDetails(request.getMail());
-    
-    // Genera el token
-    String token = jwtService.getToken(user);
+    try {
+        // Intenta autenticar con el correo y la contraseña
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getMail(), request.getPassword())
+        );
+    } catch (BadCredentialsException e) {
+        // Lanza excepción si la contraseña es incorrecta
+        throw new BadCredentialsException("Contraseña incorrecta");
+    }
 
-    // Crea la respuesta
+    // Obtiene los detalles del usuario después de autenticar
+    UserDetails userDetails = getUserDetails(request.getMail());
+    String token = jwtService.getToken(userDetails);
+
+    // Devuelve la respuesta con el token y los detalles del usuario
     return AuthResponse.builder()
         .token(token)
-        .user((User) user) 
+        .user(user) 
         .build();
 }
 
+
+public boolean existsByEmail(String email) {
+    return userRepository.existsByMail(email);
+}
+
+public boolean existsByUsername(String username) {
+    return userRepository.existsByUsername(username);
+}
 
 
 public AuthResponse register(RegisterRequest request) {
