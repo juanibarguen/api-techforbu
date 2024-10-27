@@ -1,11 +1,23 @@
-# Usa una imagen base de OpenJDK
-FROM openjdk:17-jdk-slim
+# Usar una imagen base de Maven para compilar
+FROM maven:3.9.4-openjdk-17-slim AS build
 
-# Establece el directorio de trabajo
+# Configurar el directorio de trabajo
 WORKDIR /app
 
-# Copia el archivo JAR generado a la imagen
-COPY target/api-techforb-0.0.1-SNAPSHOT.jar app.jar
+# Copiar el pom.xml primero para aprovechar el caché de Docker
+COPY pom.xml .
 
-# Define el comando de entrada para ejecutar el JAR
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Copiar el directorio src
+COPY src ./src
+
+# Compilar el proyecto y crear el archivo JAR
+RUN mvn clean package -DskipTests
+
+# Usar una imagen más ligera para la ejecución
+FROM openjdk:17-jdk-slim
+
+# Copiar el archivo JAR construido desde la etapa de compilación
+COPY --from=build /app/target/api-techforb-0.0.1-SNAPSHOT.jar /app/app.jar
+
+# Especificar el comando de inicio
+CMD ["java", "-jar", "/app/app.jar"]
