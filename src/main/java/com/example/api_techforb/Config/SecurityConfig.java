@@ -55,7 +55,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "https://api-techforbu-production.up.railway.app")); // Agrega el dominio de Railway
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "https://frontend-techforb.vercel.app")); // Agrega el dominio de Railway
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
