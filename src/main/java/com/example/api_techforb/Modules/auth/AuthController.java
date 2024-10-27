@@ -1,7 +1,10 @@
 package com.example.api_techforb.Modules.auth;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,26 +26,33 @@ public class AuthController {
     private final AuthService authService;
     private final UserSessionService userSessionService;
     
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+@PostMapping("/login")
+public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    try {
         AuthResponse authResponse = authService.login(request);
-
-        
-        if (authResponse.getUser() == null) {
-            return ResponseEntity.badRequest().body(null); 
-        }
-
         UserSession userSession = new UserSession(
             authResponse.getUser().getMail(),
             authResponse.getUser().getUsername(),
-            authResponse.getUser().lastname,
+            authResponse.getUser().getLastname(),
             authResponse.getUser().getFirstname(),
             authResponse.getUser().getRole().toString()  
         );
         userSessionService.setCurrentUser(userSession);
 
         return ResponseEntity.ok(authResponse);
+
+    } catch (UsernameNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("El correo electrónico no está registrado");
+    } catch (BadCredentialsException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("La contraseña es incorrecta");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al procesar la solicitud de inicio de sesión");
     }
+}
+
 
 
     @PostMapping(value = "/register")
