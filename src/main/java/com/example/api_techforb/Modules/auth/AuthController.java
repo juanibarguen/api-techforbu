@@ -44,8 +44,20 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
 
-    @PostMapping(value = "register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+
+    @PostMapping(value = "/register")
+        public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        // Verifica si el email o username ya estan registrados
+        if (authService.existsByEmail(request.getMail())) {
+        return ResponseEntity.badRequest().body("Error: El email ya está registrado");
     }
+
+    if (authService.existsByUsername(request.getUsername())) {
+        return ResponseEntity.badRequest().body("Error: El nombre de usuario ya está registrado");
+    }
+
+    // Si no están registrados, procede con el registro
+    AuthResponse authResponse = authService.register(request);
+    return ResponseEntity.ok(authResponse);
+}
 }

@@ -55,6 +55,13 @@ public AuthResponse login(LoginRequest request) {
         .build();
 }
 
+public boolean existsByEmail(String email) {
+    return userRepository.existsByMail(email);
+}
+
+public boolean existsByUsername(String username) {
+    return userRepository.existsByUsername(username);
+}
 
 
 public AuthResponse register(RegisterRequest request) {
