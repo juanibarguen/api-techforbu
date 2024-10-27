@@ -55,7 +55,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://frontend-techforb-98ds5k8ii-juanibarguens-projects.vercel.app/")); // Para pruebas solamente
+        configuration.setAllowedOrigins(Arrays.asList("https://frontend-techforb.vercel.app/")); // Para pruebas solamente
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
