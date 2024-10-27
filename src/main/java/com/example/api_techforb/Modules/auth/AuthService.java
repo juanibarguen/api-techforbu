@@ -57,23 +57,27 @@ public AuthResponse login(LoginRequest request) {
 
 
 
-    public AuthResponse register(RegisterRequest request) {
-        User user = User.builder()
-            .firstname(request.getFirstname())
-            .lastname(request.getLastname())
-            .username(request.getUsername())
-            .mail(request.getMail())
-            .password(passwordEncoder.encode( request.getPassword()))
-            .role(Role.USER)
-            .build();
+public AuthResponse register(RegisterRequest request) {
+    System.out.println("Contenido de RegisterRequest: " + request);
+    
+    User user = User.builder()
+        .firstname(request.getFirstname())
+        .lastname(request.getLastname())
+        .username(request.getUsername())
+        .mail(request.getMail())
+        .password(passwordEncoder.encode(request.getPassword()))
+        .role(Role.USER)
+        .build();
 
-        userRepository.save(user);
+    userRepository.save(user);
 
-        return AuthResponse.builder()
-            .token(jwtService.getToken(user))
-            .build();
-        
-    }
+    return AuthResponse.builder()
+        .token(jwtService.getToken(user))
+        .user(user) // Devuelve el usuario completo
+        .build();
+}
+
+
 
 
 public User getUserDataByEmail(String email) {

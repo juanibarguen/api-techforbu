@@ -1,5 +1,7 @@
 package com.example.api_techforb.Modules.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,10 @@ public class RegisterRequest {
     String username;
     String password;
     String mail;
-    String lastname;
+
+    @JsonProperty("firstName")
     String firstname;
+
+    @JsonProperty("lastName")
+    String lastname;
 }
