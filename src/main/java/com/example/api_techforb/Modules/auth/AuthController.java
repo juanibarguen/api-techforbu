@@ -55,10 +55,12 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
 
 
-    @PostMapping(value = "/register")
-        public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        // Verifica si el email o username ya estan registrados
-        if (authService.existsByEmail(request.getMail())) {
+@PostMapping(value = "/register")
+public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    System.out.println("Registro solicitado: " + request); // Log de la solicitud
+
+    // Verifica si el email o username ya estan registrados
+    if (authService.existsByEmail(request.getMail())) {
         return ResponseEntity.badRequest().body("Error: El email ya está registrado");
     }
 
