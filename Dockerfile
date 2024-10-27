@@ -1,23 +1,26 @@
-# Usar una imagen base de Maven para compilar
-FROM maven:3.9.4-openjdk-17-slim AS build
+# Usa la imagen base de OpenJDK 21 y agrega Maven manualmente
+FROM openjdk:21-jdk-slim AS build
 
-# Configurar el directorio de trabajo
+# Instala Maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configura el directorio de trabajo
 WORKDIR /app
 
-# Copiar el pom.xml primero para aprovechar el caché de Docker
+# Copia el archivo pom.xml y descarga dependencias
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Copiar el directorio src
-COPY src ./src
-
-# Compilar el proyecto y crear el archivo JAR
+# Copia el resto del proyecto y compila
+COPY . .
 RUN mvn clean package -DskipTests
 
-# Usar una imagen más ligera para la ejecución
-FROM openjdk:17-jdk-slim
+# Usa una imagen base liviana de Java para ejecutar la app
+FROM openjdk:21-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/api-techforb-0.0.1-SNAPSHOT.jar app.jar
 
-# Copiar el archivo JAR construido desde la etapa de compilación
-COPY --from=build /app/target/api-techforb-0.0.1-SNAPSHOT.jar /app/app.jar
-
-# Especificar el comando de inicio
-CMD ["java", "-jar", "/app/app.jar"]
+# Comando para iniciar la aplicación
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
