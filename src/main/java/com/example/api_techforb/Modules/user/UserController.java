@@ -15,11 +15,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserSessionService userSessionService;
+    private final UserSessionService userSessionService; // Servicio para gestionar la sesión del usuario
 
-    @GetMapping("/dataUser")
+
+    @GetMapping("/dataUser") // Punto de acceso para obtener los datos de usuario de la sesión actual
     public ResponseEntity<UserSession> getUserInfo() {
-        UserSession currentUser = userSessionService.getCurrentUser();
+        UserSession currentUser = userSessionService.getCurrentUser(); // Obtiene el usuario actual de la sesión
         
         if (currentUser == null) {
             return ResponseEntity.status(404).body(null); // Devuelve 404 si no hay sesión activa

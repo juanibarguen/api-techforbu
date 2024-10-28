@@ -13,39 +13,39 @@ import com.example.api_techforb.Modules.plants.Service.PlantService;
 
 @RestController
 @RequestMapping("/plants")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")     
 public class PlantController {
 
-    @Autowired
+    @Autowired // Inyecta el servicio de plantas
     private PlantService plantService;
 
-    @GetMapping
+    @GetMapping // Obtiene la lista de todas las plantas
     public List<Plant> getAllPlants() { return plantService.getAllPlants(); }
 
     @GetMapping("/{id}")
     public ResponseEntity<Plant> getPlantById(@PathVariable Long id) {
         return plantService.getPlantById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)// Si se encuentra la planta, devuelve un 200 OK
+                .orElse(ResponseEntity.notFound().build()); // Si no, devuelve un 404 Not Found
     }
 
-    @PostMapping
+    @PostMapping// Crea una nueva planta con los datos proporcionados en la solicitud
     public Plant createPlant(@RequestBody Plant plant) { return plantService.savePlant(plant); }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") // Actualiza una planta existente con nuevos detalles
     public ResponseEntity<Plant> updatePlant(@PathVariable Long id, @RequestBody Plant plantDetails) {
         try {
-            Plant updatedPlant = plantService.updatePlant(id, plantDetails);
-            return ResponseEntity.ok(updatedPlant);
+            Plant updatedPlant = plantService.updatePlant(id, plantDetails); // Intenta actualizar la planta
+            return ResponseEntity.ok(updatedPlant); // Devuelve el objeto actualizado
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); // Si no se encuentra, devuelve un 404 Not Found
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // Elimina una planta según su ID
     public ResponseEntity<Void> deletePlant(@PathVariable Long id) {
-        plantService.deletePlant(id);
-        return ResponseEntity.noContent().build();
+        plantService.deletePlant(id);// Llama al servicio para eliminar la planta
+        return ResponseEntity.noContent().build(); // Responde con un 204 No Content si se elimina exitosamente
     }
 
 

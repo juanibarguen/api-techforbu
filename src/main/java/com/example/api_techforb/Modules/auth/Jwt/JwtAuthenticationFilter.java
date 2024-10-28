@@ -29,21 +29,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
        
+        // Extrae el token de autenticación de la solicitud
         final String token = getTokenFromRequest(request);
         final String username;
 
+        // Si no hay token, continúa con el siguiente filtro
         if (token==null)
         {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // Obtiene el nombre de usuario del token JWT
         username=jwtService.getUsernameFromToken(token);
-
+        // Si hay un usuario y aún no está autenticado, procede a validar el token
         if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null)
         {
             UserDetails userDetails=userDetailsService.loadUserByUsername(username);
-
+            // Verifica si el token es válido para el usuario
             if (jwtService.isTokenValid(token, userDetails))
             {
                 UsernamePasswordAuthenticationToken authToken= new UsernamePasswordAuthenticationToken(
@@ -51,23 +54,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     null,
                     userDetails.getAuthorities());
 
+                // Configura los detalles de autenticación y los establece en el contexto de seguridad
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-
         }
-        
+        // Continúa con el siguiente filtro en la cadena
         filterChain.doFilter(request, response);
     }
 
+    // Extrae el token del encabezado de autorización de la solicitud
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authHeader=request.getHeader(HttpHeaders.AUTHORIZATION);
-
+    // Verifica si el encabezado está presente y comienza con "Bearer "
         if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer "))
         {
-            return authHeader.substring(7);
+            return authHeader.substring(7); // Extrae solo el token
         }
-        return null;
+        return null; // Retorna null si no se encuentra el token
     }
 }

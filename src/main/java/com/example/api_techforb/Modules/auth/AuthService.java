@@ -25,11 +25,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
+    // Inyección de dependencias para el repositorio de usuarios, el servicio de JWT, el codificador de contraseñas y el administrador de autenticación
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+    // Obtiene los detalles de un usuario a partir de su correo electrónico.
     private UserDetails getUserDetails(String mail) {
         User user = userRepository.findByMail(mail)
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
@@ -63,19 +65,21 @@ public AuthResponse login(LoginRequest request) {
         .build();
 }
 
-
+//Verifica si un correo electrónico ya está registrado en la base de datos.
 public boolean existsByEmail(String email) {
     return userRepository.existsByMail(email);
 }
 
+//Verifica si un username ya está registrado en la base de datos.
 public boolean existsByUsername(String username) {
     return userRepository.existsByUsername(username);
 }
 
 
 public AuthResponse register(RegisterRequest request) {
-    System.out.println("Contenido de RegisterRequest: " + request);
-    
+    //System.out.println("Contenido de RegisterRequest: " + request);
+            
+    // Construye un nuevo objeto de usuario con los datos recibidos
     User user = User.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
@@ -85,8 +89,10 @@ public AuthResponse register(RegisterRequest request) {
         .role(Role.USER)
         .build();
 
+    // Guarda el usuario en la base de datos
     userRepository.save(user);
 
+    // Devuelve la respuesta de autenticación con el token JWT y el usuario registrado
     return AuthResponse.builder()
         .token(jwtService.getToken(user))
         .user(user) // Devuelve el usuario completo
@@ -95,7 +101,7 @@ public AuthResponse register(RegisterRequest request) {
 
 
 
-
+//Obtiene los datos del usuario a partir de su correo electrónico
 public User getUserDataByEmail(String email) {
     return userRepository.findByMail(email)
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el correo: " + email));
